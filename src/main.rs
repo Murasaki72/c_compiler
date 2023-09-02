@@ -2,8 +2,38 @@ use std::fs;
 use std::io::Write;
 use std::process::Command;
 
-fn tokenize(){
+enum TokenKind {
+    NUMBER,
+    OPERATOR,
+}
+pub struct Token {
+    content: String,
+    kind: TokenKind,
+}
+
+fn load_source(string_source: &mut String){
+    let content = fs::read_to_string("input/input.c").expect("Cannot read a file");
+    string_source.push_str(&content);
+}
+
+fn tokenize(string_source: &String, tokens:&mut Vec<Token>){
     
+    let mut is_in_number = false;
+    let mut tmp_string = String::from("");
+
+    // Brute force the given string.
+    for c in string_source.chars() {
+        if c == '0' || c == '1' || c == '2' || c == '3' || c == '4' || c == '5' || c == '6' || c == '7' || c == '8' || c == '9' {
+            if !is_in_number {
+                is_in_number = true;
+            }
+            tmp_string.push(c);
+        } else if is_in_number {
+            is_in_number = false;
+            tokens.push(Token{content: tmp_string, kind: TokenKind::NUMBER});
+        }
+    }
+
 }
 
 // In this function, the assembly file will be generated.
@@ -32,6 +62,14 @@ fn run_executable(){
 }
 
 fn main(){
+
+    let mut string_source = String::from("");
+    load_source(&mut string_source);
+
+    let mut tokens: Vec<Token> = Vec::new();
+    tokenize(&string_source, &mut tokens);
+
+    //println!("{}", string_source);
 
     generate_assembly();
     assemble();
