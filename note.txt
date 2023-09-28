@@ -1,0 +1,2 @@
+This Rust project creates an assembly code.
+You can convert it into an executable if you run makefile.
